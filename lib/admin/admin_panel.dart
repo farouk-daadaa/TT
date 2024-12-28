@@ -103,8 +103,10 @@ class _AdminPanelState extends State<AdminPanel> {
         onPressed: _addCourse,
         child: const Icon(Icons.add, color: Colors.white),
         backgroundColor: const Color(0xFFD81B60),
-      ),
+      ),  floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat, // Centers the button at the bottom.
+
     );
+
   }
 
 
@@ -161,8 +163,11 @@ class _AdminPanelState extends State<AdminPanel> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFD81B60),
+                    foregroundColor: Colors.white, // Text color.
+
                   ),
                   child: const Text('Choose Image'),
+
                 ),
                 const SizedBox(height: 16),
                 TextField(
@@ -200,8 +205,12 @@ class _AdminPanelState extends State<AdminPanel> {
           actions: [
             TextButton(
               onPressed: isUploading ? null : () => Navigator.pop(context),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.black, // Set the text color to white
+              ),
               child: const Text('Cancel'),
             ),
+
             ElevatedButton(
               onPressed: isUploading
                   ? null
@@ -254,6 +263,8 @@ class _AdminPanelState extends State<AdminPanel> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFD81B60),
+                foregroundColor: Colors.white, // Text color.
+
               ),
               child: Text(isUploading ? 'Saving...' : 'Save'),
             ),
@@ -280,13 +291,20 @@ class _AdminPanelState extends State<AdminPanel> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.black, // Set the "Cancel" text to black
+            ),
             child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFFD81B60), // Change background color to your custom color
+              foregroundColor: Colors.white, // Set the "Delete" text to white
+            ),
             child: const Text('Delete'),
           ),
+
         ],
       ),
     );
@@ -351,10 +369,11 @@ class CourseCard extends StatelessWidget {
                       const SizedBox(width: 8),
                       IconButton(
                         icon: const Icon(Icons.delete),
-                        color: Colors.white,
+                        color: Color(0xFFD81B60),
+
                         onPressed: onDelete,
                         style: IconButton.styleFrom(
-                          backgroundColor: Colors.red,
+                          backgroundColor: Colors.white,
                         ),
                       ),
                     ],

@@ -7,6 +7,7 @@ class HeroSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 400,
+      margin: const EdgeInsets.only(bottom: 30),
       decoration: BoxDecoration(
         image: DecorationImage(
           image: const NetworkImage(
@@ -22,6 +23,7 @@ class HeroSection extends StatelessWidget {
       child: Center(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 30),
+          margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 30),
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.85), // Semi-transparent white background
             borderRadius: BorderRadius.circular(8),
@@ -30,27 +32,18 @@ class HeroSection extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Improve your skills on your own',
+                'Improve your skills on your own To prepare for a better future',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 32,
+                  fontSize: 30,
                   fontWeight: FontWeight.w600,
                   color: Colors.black.withOpacity(0.85),
                   height: 1.2,
                 ),
               ),
+
+
               const SizedBox(height: 16),
-              Text(
-                'To prepare for a better future',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black.withOpacity(0.85),
-                  height: 1.2,
-                ),
-              ),
-              const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
