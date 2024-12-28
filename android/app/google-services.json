@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "233073064729",
+    "project_id": "tt-9antra",
+    "storage_bucket": "tt-9antra.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:233073064729:android:98a61519cba531e8146388",
+        "android_client_info": {
+          "package_name": "com.example.technical_test"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnNBR3-B_AOV-pXgEZbBN_pi3wrUfP42I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
