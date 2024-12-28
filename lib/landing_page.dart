@@ -11,57 +11,45 @@ class LandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        actions: [
-          ElevatedButton(
-            onPressed: () async {
-              // Check if user is already signed in
-              User? user = FirebaseAuth.instance.currentUser;
-              if (user != null) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AdminPanel()),
-                );
-              } else {
-                // If not signed in, show login dialog
-                bool? result = await showDialog<bool>(
-                  context: context,
-                  builder: (context) => const AdminLoginDialog(),
-                );
-                if (result == true) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const AdminPanel()),
-                  );
-                }
-              }
-            },
-            child: const Text('Admin'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFD81B60),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-            ),
-          ),
-          const SizedBox(width: 20),
-        ],
-      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
               padding: const EdgeInsets.all(20.0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Image.asset(
-                  'assets/logo.png',
-                  height: 45,
-                  fit: BoxFit.contain,
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Image.asset(
+                    'assets/logo.png',
+                    height: 45,
+                    fit: BoxFit.contain,
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      User? user = FirebaseAuth.instance.currentUser;
+                      if (user != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const AdminPanel()),
+                        );
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (context) => const AdminLoginDialog(),
+                        );
+                      }
+                    },
+                    child: const Text('Admin'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFD81B60),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             const HeroSection(),
@@ -85,6 +73,7 @@ class _AdminLoginDialogState extends State<AdminLoginDialog> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
+  String _errorMessage = '';
 
   @override
   void dispose() {
@@ -94,24 +83,42 @@ class _AdminLoginDialogState extends State<AdminLoginDialog> {
   }
 
   Future<void> _login() async {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      setState(() {
+        _errorMessage = 'Please fill in all fields';
+      });
+      return;
+    }
+
     setState(() {
       _isLoading = true;
+      _errorMessage = '';
     });
 
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
+      // Wait for the authentication result
+      final UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
       );
+
       if (mounted) {
-        Navigator.of(context).pop(true);
+        if (userCredential.user != null) {
+          // Successfully logged in
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const AdminPanel()),
+          );
+        }
       }
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        _errorMessage = e.message ?? 'Invalid credentials. Please try again.';
+      });
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Invalid credentials')),
-        );
-      }
+      setState(() {
+        _errorMessage = 'An error occurred. Please try again.';
+      });
     } finally {
       if (mounted) {
         setState(() {
@@ -123,35 +130,128 @@ class _AdminLoginDialogState extends State<AdminLoginDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Admin Login'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            controller: _emailController,
-            decoration: const InputDecoration(labelText: 'Email'),
-          ),
-          TextField(
-            controller: _passwordController,
-            decoration: const InputDecoration(labelText: 'Password'),
-            obscureText: true,
-          ),
-        ],
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(false),
-          child: const Text('Cancel'),
+      child: Container(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Admin Login',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'EMAIL',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+                letterSpacing: 1.2,
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _emailController,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: const Color(0xFFFFF3E0),
+                hintText: 'Enter your email',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+              ),
+              keyboardType: TextInputType.emailAddress,
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'PASSWORD',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+                letterSpacing: 1.2,
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _passwordController,
+              obscureText: true,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: const Color(0xFFFFF3E0),
+                hintText: 'Enter your password',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+              ),
+            ),
+            if (_errorMessage.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Text(
+                  _errorMessage,
+                  style: const TextStyle(
+                    color: Color(0xFFD81B60),
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _isLoading ? null : _login,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFD81B60),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                  ),
+                  elevation: 0,
+                ),
+                child: _isLoading
+                    ? const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                )
+                    : const Text(
+                  'Login',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
-        ElevatedButton(
-          onPressed: _isLoading ? null : _login,
-          child: _isLoading
-              ? const CircularProgressIndicator()
-              : const Text('Login'),
-        ),
-      ],
+      ),
     );
   }
 }
-
