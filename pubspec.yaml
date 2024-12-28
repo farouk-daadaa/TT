@@ -60,12 +60,7 @@ flutter:
 
   assets:
     - assets/logo.png
-    - assets/courses/spring_angular.png
-    - assets/courses/node_react.png
-    - assets/courses/flutter_firebase.png
-    - assets/courses/business_intelligence.png
-    - assets/courses/artificial_intelligence.png
-    - assets/courses/devops.png
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

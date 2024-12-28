@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
+import '../sections/courses_section.dart';
+
 
 class AdminPanel extends StatefulWidget {
   const AdminPanel({Key? key}) : super(key: key);
@@ -71,10 +73,23 @@ class _AdminPanelState extends State<AdminPanel> {
                     itemBuilder: (context, index) {
                       DocumentSnapshot document = snapshot.data!.docs[index];
                       Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-                      return CourseCard(
-                        course: data,
-                        onEdit: () => _editCourse(document.id, data),
-                        onDelete: () => _deleteCourse(document.id),
+                      return Stack(
+                        children: [
+                          CourseCard(
+                            course: data,
+                            onEdit: () => _editCourse(document.id, data),
+                            onDelete: () => _deleteCourse(document.id),
+                          ),
+                          Positioned(
+                            top: 8,
+                            right: 8,
+                            child: Row(
+                              children: [
+
+                              ],
+                            ),
+                          ),
+                        ],
                       );
                     },
                   ),
@@ -91,6 +106,7 @@ class _AdminPanelState extends State<AdminPanel> {
       ),
     );
   }
+
 
   Future<void> _showCourseDialog({String? id, Map<String, dynamic>? existingData}) async {
     final nameController = TextEditingController(text: existingData?['name'] ?? '');
